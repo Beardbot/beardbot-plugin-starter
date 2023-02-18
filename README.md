@@ -1,0 +1,1 @@
+# beardbot-plugin-starter
