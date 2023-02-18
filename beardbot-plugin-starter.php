@@ -5,7 +5,7 @@
  * Plugin Name:       Beardbot Plugin Starter
  * Plugin URI:        https://github.com/Beardbot/beardbot-plugin-starter
  * Description:       A starter template for a custom WordPress plugin.
- * Version:           1.0
+ * Version:           1.0.1
  * Author:            Beardbot
  * Author URI:        https://beardbot.com.au/
  * Requires at least: 5.9
@@ -40,7 +40,7 @@ class Plugin_Starter {
 
   protected $branch = 'main'; // GitHub branch that contains the latest release
 
-  protected $token = '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'; // GitHub API access token
+  protected $token = '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'; // GitHub API access token
 
   protected $repo = 'https://github.com/Beardbot/beardbot-plugin-starter'; // GitHub repository URL
 
