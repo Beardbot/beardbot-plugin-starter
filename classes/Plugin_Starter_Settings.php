@@ -8,9 +8,9 @@ class Plugin_Starter_Settings extends Plugin_Starter {
 
   private const SECRET_IV = 'DpPdUf5Apw$`T7KH';
 
-	private $key;
+	protected $key;
 
-	private $iv;
+	protected $iv;
 
 	protected $option_name = 'beardbot_plugin_starter';
 
@@ -27,17 +27,6 @@ class Plugin_Starter_Settings extends Plugin_Starter {
 		$this->iv = substr(hash('sha256', $this::SECRET_IV), 0, 16);
 
 		$this->options = get_option($this->option_name);
-	}
-
-	function get_option_name() {
-		return $this->option_name;
-	}
-
-	function get_keys() {
-		return [
-			'key' => $this->key,
-			'iv' => $this->iv,
-		];
 	}
 
 	// Register option page

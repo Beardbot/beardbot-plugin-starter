@@ -10,7 +10,7 @@ A starter template for your next custom WordPress plugin. This plugin includes a
 
 3. Rename the beardbot-plugin-starter.php file using your chosen slug.
 
-4. Rename the classes/Plugin_Starter_Settings.php using your chosen slug.
+4. Rename the classes/Plugin_Starter_Settings.php file using your chosen slug.
 
 5. Update the plugin header details.
 

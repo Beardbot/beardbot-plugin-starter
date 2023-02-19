@@ -5,7 +5,7 @@
  * Plugin Name:       Beardbot Plugin Starter
  * Plugin URI:        https://github.com/Beardbot/beardbot-plugin-starter
  * Description:       A starter template for a custom WordPress plugin.
- * Version:           1.1
+ * Version:           1.2
  * Author:            Beardbot
  * Author URI:        https://beardbot.com.au/
  * Requires at least: 5.9
@@ -30,7 +30,7 @@ require( 'autoload.php' );
 
 class Plugin_Starter {
 
-  protected $file = __FILE__;
+  protected $file;
 
   protected $path;
   
@@ -39,10 +39,6 @@ class Plugin_Starter {
   protected $slug;
   
   protected $settings;
-
-  protected $option;
-
-  private $keys;
 
   protected $token; // GitHub API access token
 
@@ -67,8 +63,6 @@ class Plugin_Starter {
 
     $this->settings = new Plugin_Starter_Settings();
 
-    $this->keys = $this->settings->get_keys(); // Keys for ecrypting/decrypting the GitHub API token
-
     $this->token = $this->generate_token();
 
     $this->run_update_checker();
@@ -81,10 +75,10 @@ class Plugin_Starter {
   }
 
   private function generate_token() {
-
-    $option = get_option($this->settings->get_option_name());
-
-    $this->token = $this->decrypt_text($option['github_api']);
+    // Get the plugin options
+    $options = get_option($this->settings->option_name);
+    // Decrypt the token value
+    $this->token = $this->decrypt_text($options['github_api']);
   }
 
   private function run_update_checker() {
@@ -104,11 +98,11 @@ class Plugin_Starter {
   }
 
   function encrypt_text($text) {
-		return base64_encode(openssl_encrypt($text, "AES-256-CBC", $this->keys['key'], 0, $this->keys['iv']));
+		return base64_encode(openssl_encrypt($text, "AES-256-CBC", $this->settings->key, 0, $this->settings->iv));
 	}
 
 	function decrypt_text($text) {
-		return openssl_decrypt(base64_decode($text), "AES-256-CBC" ,$this->keys['key'], 0 ,$this->keys['iv']);
+		return openssl_decrypt(base64_decode($text), "AES-256-CBC" ,$this->settings->key, 0 ,$this->settings->iv);
 	}
 }
 
