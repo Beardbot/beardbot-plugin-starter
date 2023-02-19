@@ -39,3 +39,9 @@ A starter template for your next custom WordPress plugin. This plugin includes a
     * $token
 
     * $repo
+
+10. Update the following class constants in the Plugin_Starter_Settings class with randomly generated keys.
+
+    * SECRET_KEY
+
+    * SECRET_IV

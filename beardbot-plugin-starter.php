@@ -5,7 +5,7 @@
  * Plugin Name:       Beardbot Plugin Starter
  * Plugin URI:        https://github.com/Beardbot/beardbot-plugin-starter
  * Description:       A starter template for a custom WordPress plugin.
- * Version:           1.0.1
+ * Version:           1.1
  * Author:            Beardbot
  * Author URI:        https://beardbot.com.au/
  * Requires at least: 5.9
@@ -37,12 +37,18 @@ class Plugin_Starter {
   protected $dir;
 
   protected $slug;
+  
+  protected $settings;
 
-  protected $branch = 'main'; // GitHub branch that contains the latest release
+  protected $option;
 
-  protected $token = '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'; // GitHub API access token
+  private $keys;
+
+  protected $token; // GitHub API access token
 
   protected $repo = 'https://github.com/Beardbot/beardbot-plugin-starter'; // GitHub repository URL
+
+  protected $branch = 'main'; // GitHub branch that contains the latest release
 
   function __construct() {
 
@@ -59,15 +65,26 @@ class Plugin_Starter {
 
   protected function load() {
 
-    $this->run_update_checker();
+    $this->settings = new Plugin_Starter_Settings();
 
-    new Plugin_Starter_Settings();
+    $this->keys = $this->settings->get_keys(); // Keys for ecrypting/decrypting the GitHub API token
+
+    $this->token = $this->generate_token();
+
+    $this->run_update_checker();
 
     add_action('init', [$this, 'init'], 10, 2);
   }
 
   function init() {
     // initialise plugin
+  }
+
+  private function generate_token() {
+
+    $option = get_option($this->settings->get_option_name());
+
+    $this->token = $this->decrypt_text($option['github_api']);
   }
 
   private function run_update_checker() {
@@ -85,6 +102,14 @@ class Plugin_Starter {
     // Set the GitHub Access Token
     $myUpdateChecker->setAuthentication($this->token);
   }
+
+  function encrypt_text($text) {
+		return base64_encode(openssl_encrypt($text, "AES-256-CBC", $this->keys['key'], 0, $this->keys['iv']));
+	}
+
+	function decrypt_text($text) {
+		return openssl_decrypt(base64_decode($text), "AES-256-CBC" ,$this->keys['key'], 0 ,$this->keys['iv']);
+	}
 }
 
 new Plugin_Starter();

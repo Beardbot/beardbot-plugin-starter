@@ -4,6 +4,14 @@ namespace Beardbot;
 
 class Plugin_Starter_Settings extends Plugin_Starter {
 
+	private const SECRET_KEY = 'M4btDbgy7`%XLXwf';
+
+  private const SECRET_IV = 'DpPdUf5Apw$`T7KH';
+
+	private $key;
+
+	private $iv;
+
 	protected $option_name = 'beardbot_plugin_starter';
 
 	protected $option_group = 'beardbot_plugin_starter_group';
@@ -11,16 +19,26 @@ class Plugin_Starter_Settings extends Plugin_Starter {
 	protected $options = [];
 
 	function __construct() {
-		add_action( 'admin_menu', [$this, 'add_admin_menu'] );
-		add_action( 'admin_init', [$this, 'settings_init'] );
+		add_action('admin_menu', [$this, 'add_admin_menu']);
+		add_action('admin_init', [$this, 'settings_init']);
+		add_filter('pre_update_option', [$this, 'pre_update_option'], 10, 3);
 
-		$this->options = get_option( $this->option_name );
+		$this->key = hash('sha256', $this::SECRET_KEY);
+		$this->iv = substr(hash('sha256', $this::SECRET_IV), 0, 16);
+
+		$this->options = get_option($this->option_name);
 	}
 
 	function get_option_name() {
 		return $this->option_name;
 	}
 
+	function get_keys() {
+		return [
+			'key' => $this->key,
+			'iv' => $this->iv,
+		];
+	}
 
 	// Register option page
 	function add_admin_menu() {
@@ -44,21 +62,21 @@ class Plugin_Starter_Settings extends Plugin_Starter {
 
 		// Register a custom field
 		add_settings_field(
-			'beardbot_plugin_starter_custom_field',
-			__( 'Custom Field', $this->option_name ),
-			[$this, 'custom_field_render'],
+			'beardbot_plugin_starter_github_api',
+			__( 'GitHub API Token', $this->option_name ),
+			[$this, 'github_api_render'],
 			$this->option_group,
 			'beardbot_plugin_starter_section'
 		);
 	}
 
 	// Render custom field
-	function custom_field_render() {
-		$value = $this->options['custom_field'] ?? '';
+	function github_api_render() {
+		$value = $this->options['github_api'] ?? '';
 	  ?>
-		<input type="text" id="custom-field" name="beardbot_plugin_starter[custom_field]" value="<?php echo $value; ?>" placeholder="Custom field" size="30">
+		<input type="text" id="github-api" name="beardbot_plugin_starter[github_api]" value="<?php echo $this->decrypt_text($value); ?>" placeholder="Enter your GitHub API Token" size="30">
 		<p class="description">
-			Custom field help text
+			Create your <a href="https://github.com/settings/tokens" target="_blank" rel="noopener">GitHub API Token</a>
 		</p>
 		<?php
 	}
@@ -77,5 +95,12 @@ class Plugin_Starter_Settings extends Plugin_Starter {
 			</form>
 	  </div>
 		<?php
+	}
+
+	function pre_update_option($value, $option, $old_value) {
+		if($option === $this->option_name) {
+			$value['github_api'] = $this->encrypt_text($value['github_api']);
+		}
+		return $value;
 	}
 }
