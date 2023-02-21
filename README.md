@@ -36,8 +36,6 @@ A starter template for your next custom WordPress plugin. This plugin includes a
 
     * $branch
 
-    * $token
-
     * $repo
 
 10. Update the following class constants in the Plugin_Starter_Settings class with randomly generated keys.

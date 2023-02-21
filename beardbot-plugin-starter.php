@@ -5,7 +5,7 @@
  * Plugin Name:       Beardbot Plugin Starter
  * Plugin URI:        https://github.com/Beardbot/beardbot-plugin-starter
  * Description:       A starter template for a custom WordPress plugin.
- * Version:           1.2
+ * Version:           1.1
  * Author:            Beardbot
  * Author URI:        https://beardbot.com.au/
  * Requires at least: 5.9
@@ -56,18 +56,17 @@ class Plugin_Starter {
 
     $this->slug = basename( __DIR__ );
 
-    $this->load();
+    // $this->load();
+    add_action('init', [$this, 'load'], 10, 2);
   }
 
-  protected function load() {
+  public function load() {
 
     $this->settings = new Plugin_Starter_Settings();
 
     $this->token = $this->generate_token();
 
     $this->run_update_checker();
-
-    add_action('init', [$this, 'init'], 10, 2);
   }
 
   function init() {
@@ -78,7 +77,7 @@ class Plugin_Starter {
     // Get the plugin options
     $options = get_option($this->settings->option_name);
     // Decrypt the token value
-    $this->token = $this->decrypt_text($options['github_api']);
+    return $this->decrypt_text($options['github_api']);
   }
 
   private function run_update_checker() {
@@ -102,7 +101,7 @@ class Plugin_Starter {
 	}
 
 	function decrypt_text($text) {
-		return openssl_decrypt(base64_decode($text), "AES-256-CBC" ,$this->settings->key, 0 ,$this->settings->iv);
+		return openssl_decrypt(base64_decode($text), "AES-256-CBC" ,$this->settings->key, 0, $this->settings->iv);
 	}
 }
 

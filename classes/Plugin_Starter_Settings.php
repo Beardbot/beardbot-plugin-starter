@@ -62,8 +62,10 @@ class Plugin_Starter_Settings extends Plugin_Starter {
 	// Render custom field
 	function github_api_render() {
 		$value = $this->options['github_api'] ?? '';
+		// Decrypt the API key before outputting
+		$api_key = $this->decrypt_text($value);
 	  ?>
-		<input type="text" id="github-api" name="beardbot_plugin_starter[github_api]" value="<?php echo $this->decrypt_text($value); ?>" placeholder="Enter your GitHub API Token" size="30">
+		<input type="text" id="github-api" name="beardbot_plugin_starter[github_api]" value="<?php echo $api_key; ?>" placeholder="Enter your GitHub API Token" size="30">
 		<p class="description">
 			Create your <a href="https://github.com/settings/tokens" target="_blank" rel="noopener">GitHub API Token</a>
 		</p>
@@ -88,6 +90,7 @@ class Plugin_Starter_Settings extends Plugin_Starter {
 
 	function pre_update_option($value, $option, $old_value) {
 		if($option === $this->option_name) {
+			// Encrypt the API key before saving to the database
 			$value['github_api'] = $this->encrypt_text($value['github_api']);
 		}
 		return $value;
